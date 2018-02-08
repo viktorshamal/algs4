@@ -6,6 +6,7 @@ class MyUnionFind(UF):
     def __init__(self, *args, **kwargs):
         super(MyUnionFind, self).__init__(*args, **kwargs)
         self.maxComponentSize = 1
+        self.isolatedComponents = self._count
 
     def union(self, p, q):
         """
@@ -25,6 +26,13 @@ class MyUnionFind(UF):
             small, large = root_p, root_q
         else:
             small, large = root_q, root_p
+
+        # If it's an isolated component being connected,
+        # then it's no longer isolated.
+        if self._size[small] == 1:
+            self.isolatedComponents -= 1
+        if self._size[large] == 1:
+            self.isolatedComponents -= 1
 
         self._parent[small] = large
         self._size[large] += self._size[small]
