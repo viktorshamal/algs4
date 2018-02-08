@@ -15,8 +15,6 @@ class GiantBook:
         if not self.giantComponent and self.store.maxComponentSize > n_half:
             self.giantComponent = i
 
-
-w
     def simulateRandomConnections(self):
         i = 0
 
