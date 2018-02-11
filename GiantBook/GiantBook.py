@@ -15,7 +15,7 @@ class GiantBook:
         i = 0
         n_half = ceil(self.count * 0.5)
 
-        while True:
+        while self.store.count() > 1:
             p = randint(0, self.count - 1)
             q = randint(0, self.count - 1)
 
@@ -33,11 +33,8 @@ class GiantBook:
 
             i += 1
 
-            if self.store.count() == 1:
-                break
-
         print(self.count, self.isConnected, self.giantComponent, i)
 
 
-g = GiantBook(int(1e5))
+g = GiantBook(int(1e3))
 g.simulateRandomConnections()
