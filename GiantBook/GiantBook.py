@@ -2,6 +2,7 @@
 from MyUnionFind import MyUnionFind
 from random import randint
 from math import ceil
+from numpy import mean, std
 
 
 class GiantBook:
@@ -16,6 +17,8 @@ class GiantBook:
         n_half = ceil(self.count * 0.5)
 
         while self.store.count() > 1:
+            i += 1
+
             p = randint(0, self.count - 1)
             q = randint(0, self.count - 1)
 
@@ -31,10 +34,21 @@ class GiantBook:
             if not self.isConnected and self.store.isolatedComponents == 0:
                 self.isConnected = i
 
-            i += 1
-
-        print(self.count, self.isConnected, self.giantComponent, i)
+        return self.giantComponent, self.isConnected, i
 
 
-g = GiantBook(int(1e3))
-g.simulateRandomConnections()
+def performanceTest(N, T):
+    results = []
+
+    for t in range(T):
+        result = GiantBook(N).simulateRandomConnections()
+        results.append(result)
+
+    results = mean(results, axis=0), std(results, axis=0)
+
+    for x in results:
+        for y in x:
+            print('%.2e' % y)
+
+
+performanceTest(int(1e9), 1)
