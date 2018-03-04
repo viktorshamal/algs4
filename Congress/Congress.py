@@ -4,7 +4,7 @@ from collections import namedtuple
 from sys import stdin
 
 def geometric_mean(n):
-    return 1 if n==0 else sqrt(n * (n+1))
+    return sqrt(n * (n+1))
 
 def apport():
     heap = []
