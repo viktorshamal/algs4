@@ -11,21 +11,26 @@ class HashPipe:
         return pipe.value if pipe else None
 
     def put(self, key, value):
+        existing_pipe = self.find(key)
+        if(existing_pipe):
+            existing_pipe.value = value
+            return
+
         height = trailing_zeros(java_string_hash(key)) + 1
         new_pipe = Pipe(key, value, height)
 
         references_filled = 0
-        current_key = key
+        current_pipe = new_pipe
 
         while references_filled < height:
-            floor = self.floor(current_key)
+            current_pipe = self.floor_pipe(current_pipe.key)
 
-            for i, _ in enumerate(floor.references[references_filled:height]):
-                new_pipe.references[i] = floor.references[i]
-                floor.references[i] = new_pipe
+            interval = current_pipe.references[references_filled:height]
+
+            for i, _ in enumerate(interval, start=references_filled):
+                new_pipe.references[i] = current_pipe.references[i]
+                current_pipe.references[i] = new_pipe
                 references_filled += 1
-
-            current_key = floor.key
 
         self.size += 1
 
@@ -55,10 +60,13 @@ class HashPipe:
                 if not reference:
                     continue
                 if reference.key <= key:
+                    # Lets quit if we're looking for the current_pipe and the next pipe has our key.
+                    if highest_before and reference.key == key:
+                        return location
                     location = reference
                     break
 
-    def floor(self, key):
+    def current_pipe(self, key):
         return self.floor_pipe(key).key
 
     def floor_pipe(self, key):
@@ -83,7 +91,10 @@ H = Pipe('H', 5, 4)
 R = Pipe('R', 3, 2)
 S = Pipe('S', 0, 1)
 
-h.root.references = [A, H, H, H]
+h.root.references[0] = A
+h.root.references[1] = H
+h.root.references[2] = H
+h.root.references[3] = H
 
 A.references[0] = C
 C.references[0] = E
@@ -92,7 +103,7 @@ H.references[0] = R
 H.references[1] = R
 R.references[0] = S
 
-print(h.floor('X'))
+# print(h.current_pipe('S'))
 # print(h.get('H'))
 # print(h.get('A'))
 #print(h.control('C', 0))
@@ -101,4 +112,9 @@ print(h.floor('X'))
 
 # print(h.find('P').references)
 
-print(h.floor('E'))
+
+test = HashPipe()
+for i, value in enumerate('SEARCHEXAMPLE'):
+    test.put(value, i)
+
+print(test.find('X').references)
