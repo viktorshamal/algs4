@@ -12,9 +12,9 @@ class HashPipe:
 
     def put(self, key, value):
         height = trailing_zeros(java_string_hash(key)) + 1
-        new_pipe = Pipe(key, value, height)
-
         references_filled = 0
+
+        new_pipe = Pipe(key, value, height)
         current_pipe = self.floor_pipe(new_pipe.key)
         next_pipe = current_pipe.references[0]
 
