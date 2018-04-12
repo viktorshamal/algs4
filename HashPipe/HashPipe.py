@@ -11,26 +11,26 @@ class HashPipe:
         return pipe.value if pipe else None
 
     def put(self, key, value):
-        existing_pipe = self.find(key)
-        if(existing_pipe):
-            existing_pipe.value = value
-            return
-
         height = trailing_zeros(java_string_hash(key)) + 1
         new_pipe = Pipe(key, value, height)
 
         references_filled = 0
-        current_pipe = new_pipe
+        current_pipe = self.floor_pipe(new_pipe.key)
+        next_pipe = current_pipe.references[0]
+
+        if(next_pipe and next_pipe.key == key):
+            next_pipe.value = value
+            return None
 
         while references_filled < height:
-            current_pipe = self.floor_pipe(current_pipe.key)
-
             interval = current_pipe.references[references_filled:height]
 
             for i, _ in enumerate(interval, start=references_filled):
                 new_pipe.references[i] = current_pipe.references[i]
                 current_pipe.references[i] = new_pipe
                 references_filled += 1
+
+            current_pipe = self.floor_pipe(current_pipe.key)
 
         self.size += 1
 
@@ -66,9 +66,6 @@ class HashPipe:
                     location = reference
                     break
 
-    def current_pipe(self, key):
-        return self.floor_pipe(key).key
-
     def floor_pipe(self, key):
         return self.find(key, highest_before=True)
 
@@ -84,6 +81,7 @@ class Pipe:
 
 
 test = HashPipe()
+
 for i, value in enumerate('SEARCHEXAMPLE'):
     test.put(value, i)
 
