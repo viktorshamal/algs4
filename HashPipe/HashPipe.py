@@ -78,15 +78,3 @@ class Pipe:
 
     def __repr__(self):
         return self.key
-
-
-test = HashPipe()
-
-for i, value in enumerate('SEARCHEXAMPLE'):
-    test.put(value, i)
-
-node = test.root
-
-while node:
-    print(node.references)
-    node = node.references[0]
