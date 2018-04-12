@@ -87,4 +87,8 @@ test = HashPipe()
 for i, value in enumerate('SEARCHEXAMPLE'):
     test.put(value, i)
 
-print(test.find('X').references)
+node = test.root
+
+while node:
+    print(node.references)
+    node = node.references[0]
